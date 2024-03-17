@@ -1,7 +1,8 @@
-version: "3.7"
+version: "3.9"
 
 services:
   web01: &web01
+    image: eduardocpdev/rinhabackend2024:latest
     build:
       context: .
     command: "./wait-for-it.sh db:5432 -- 'python manage.py migrate && gunicorn rinhabackend.wsgi:application --bind 0.0.0.0:8000'"
@@ -12,15 +13,14 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.6"
-          memory: "200MB"
+          cpus: "0.47"
+          memory: "140MB"
 
   web02:
     # Essa sintaxe reusa o que foi declarado em 'api01'.
     <<: *web01
     hostname: api02
-    environment:
-      - DB_HOSTNAME=db
+    command: "./wait-for-it.sh db:5432 -- 'gunicorn rinhabackend.wsgi:application --bind 0.0.0.0:8000'"
     ports:
       - "8002:8000"
 
@@ -32,13 +32,12 @@ services:
       - web01
       - web02
     ports:
-      # Obrigatório expor/usar a porta 9999 no load balancer!
       - "9999:9999"
     deploy:
       resources:
         limits:
-          cpus: "0.17"
-          memory: "10MB"
+          cpus: "0.16"
+          memory: "20MB"
 
   db:
      image: postgres
@@ -50,10 +49,5 @@ services:
      deploy:
        resources:
          limits:
-           cpus: "0.13"
-           memory: "140MB"
-
-networks:
-  default:
-    driver: bridge
-    name: rinha-nginx-2024q1
+           cpus: "0.40"
+           memory: "250MB"
