@@ -24,9 +24,6 @@ class SaldoClientes(models.Model):
 
 
     def check_limit(self, transaction_value: int) -> bool:
-
-        print(transaction_value)
-        print(self.saldo)
         if transaction_value - self.saldo > self.limite:
             raise InsufficientLimit
         return True
