@@ -28,7 +28,6 @@ class SaldoClientes(models.Model):
             raise InsufficientLimit
         return True
 
-    @transaction.atomic
     def transaction(self, value: int, type: str) -> Self:
         if type == 'd' and self.check_limit(value):
             self.saldo += -value
@@ -36,10 +35,6 @@ class SaldoClientes(models.Model):
             self.saldo += value
         self.save()
         return self
-
-    @property
-    def last_ten_transactions(self) -> List:
-        return self.transacoes.order_by('-realizada_em')[:10]
 
 class Transacao(models.Model):
     realizada_em = models.DateTimeField(auto_now_add=True)

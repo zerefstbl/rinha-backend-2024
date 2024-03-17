@@ -23,21 +23,19 @@ class TransacaoSerializer(serializers.Serializer):
     def create(self, validated_data):
         return Transacao.objects.create(**validated_data)
 
-class ExtratoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SaldoClientes
-        fields = ['last_ten_transactions']
-
-    def to_representation(self, instance):
-        representation = {
-            "saldo": {
-                "total": instance.saldo,
-                "data_extrato": datetime.now(sp_tz),
-                "limite": instance.limite,
-            },
-            "ultimas_transacoes": [
-                BasicTransactionSerializer(instance.last_ten_transactions, many=True).data
-            ]
-        }
-        return representation
-
+# class ExtratoSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = SaldoClientes
+#         fields = ['saldo']
+#
+#     def to_representation(self, instance):
+#         representation = {
+#             "saldo": {
+#                 "total": instance.cliente.saldo,
+#                 "data_extrato": datetime.now(sp_tz),
+#                 "limite": instance.cliente.limite,
+#             },
+#             "ultimas_transacoes": BasicTransactionSerializer(instance.last_ten_transactions, many=True).data
+#         }
+#         return representation
+#
