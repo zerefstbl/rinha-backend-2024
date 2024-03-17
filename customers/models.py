@@ -2,15 +2,15 @@ from django.db import models
 
 from customers.exceptions import InsufficientLimit
 
-from datetime import datetime
-
 from typing import Self, List
 
 import pytz
 
+from django.db import transaction
+
 sp_tz = pytz.timezone('America/Sao_Paulo')
 
-tipo_choices = (
+type_choices = (
     ('C', 'c'),
     ('D', 'd')
 )
@@ -28,6 +28,7 @@ class SaldoClientes(models.Model):
             raise InsufficientLimit
         return True
 
+    @transaction.atomic
     def transaction(self, value: int, type: str) -> Self:
         if type == 'd' and self.check_limit(value):
             self.saldo += -value
@@ -45,7 +46,7 @@ class Transacao(models.Model):
     valor = models.IntegerField()
     descricao = models.CharField(max_length=10)
     tipo = models.CharField(
-        choices=tipo_choices,
+        choices=type_choices,
         max_length=10,
     )
     cliente = models.ForeignKey(SaldoClientes, related_name='transacoes', on_delete=models.CASCADE)
