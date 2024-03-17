@@ -21,7 +21,6 @@ class TransacaoSerializer(serializers.Serializer):
     cliente = serializers.PrimaryKeyRelatedField(queryset=SaldoClientes.objects.all(), write_only=True)
 
     def create(self, validated_data):
-        print(validated_data)
         return Transacao.objects.create(**validated_data)
 
 class ExtratoSerializer(serializers.ModelSerializer):
