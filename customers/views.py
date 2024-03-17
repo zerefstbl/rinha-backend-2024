@@ -8,12 +8,14 @@ from customers.models import Transacao, SaldoClientes
 
 from customers.serializers import ExtratoSerializer, TransacaoSerializer
 
+from django.db import transaction
 
 class NewTransactionAPIView(CreateAPIView):
     serializer_class = TransacaoSerializer
 
+    @transaction.atomic
     def create(self, request, *args, **kwargs):
-        customer = get_object_or_404(SaldoClientes, id=kwargs.get('id'))
+        customer = get_object_or_404(SaldoClientes.objects.select_for_update(), id=kwargs.get('id'))
         request.data['cliente'] = customer.id
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
